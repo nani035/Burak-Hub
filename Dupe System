@@ -1,0 +1,101 @@
+-- BurakHub-Full.lua | Made by Burak
+
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source.lua"))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Burak-Hub | Grow a Garden",
+   LoadingTitle = "BurakHub Loading...",
+   LoadingSubtitle = "by Burak",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "BurakHub",
+      FileName = "BurakSettings"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "",
+      RememberJoins = false
+   },
+   KeySystem = false
+})
+
+-- Main Tab
+local MainTab = Window:CreateTab("🌿 Main", 4483362458)
+
+MainTab:CreateButton({
+    Name = "Spawn All Pets",
+    Callback = function()
+        for _,v in pairs(game:GetService("ReplicatedStorage").Pets:GetChildren()) do
+            game:GetService("ReplicatedStorage").Events.SpawnPet:FireServer(v.Name)
+        end
+    end
+})
+
+MainTab:CreateButton({
+    Name = "Spawn All Eggs",
+    Callback = function()
+        for _,v in pairs(game:GetService("ReplicatedStorage").Eggs:GetChildren()) do
+            game:GetService("ReplicatedStorage").Events.SpawnEgg:FireServer(v.Name)
+        end
+    end
+})
+
+-- Dupe Tab
+local DupeTab = Window:CreateTab("💸 Dupe", 4483362458)
+
+DupeTab:CreateInput({
+    Name = "Dupe Specific Pet",
+    PlaceholderText = "Enter Pet Name",
+    Callback = function(PetName)
+        for i = 1, 5 do
+            game:GetService("ReplicatedStorage").Events.SpawnPet:FireServer(PetName)
+        end
+    end,
+})
+
+DupeTab:CreateButton({
+    Name = "Dupe All Pets (x5)",
+    Callback = function()
+        for _,v in pairs(game:GetService("ReplicatedStorage").Pets:GetChildren()) do
+            for i = 1, 5 do
+                game:GetService("ReplicatedStorage").Events.SpawnPet:FireServer(v.Name)
+            end
+        end
+    end
+})
+
+-- Admin Tab
+local AdminTab = Window:CreateTab("👑 Admin Tools", 4483362458)
+
+AdminTab:CreateButton({
+    Name = "Clear All Pets",
+    Callback = function()
+        game:GetService("ReplicatedStorage").Events.ClearPets:FireServer()
+    end
+})
+
+AdminTab:CreateButton({
+    Name = "Godmode",
+    Callback = function()
+        game.Players.LocalPlayer.Character.Humanoid.Name = "Godmode"
+    end
+})
+
+-- Auto Tab
+local AutoTab = Window:CreateTab("🤖 Auto", 4483362458)
+
+AutoTab:CreateToggle({
+    Name = "Auto Hatch Eggs",
+    CurrentValue = false,
+    Callback = function(State)
+        getgenv().autoHatch = State
+        while getgenv().autoHatch do
+            for _,v in pairs(game:GetService("ReplicatedStorage").Eggs:GetChildren()) do
+                game:GetService("ReplicatedStorage").Events.SpawnEgg:FireServer(v.Name)
+            end
+            task.wait(1)
+        end
+    end
+})
+
+Rayfield:LoadConfiguration()
